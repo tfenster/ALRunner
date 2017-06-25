@@ -1,4 +1,4 @@
-# alrunner README
+# AL Runner README
 
 AL Runner allows you to run a NAV AL object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file
 
@@ -20,15 +20,19 @@ You need to have the Microsoft AL Extension up and running
 Only supports page and pageextension objects as the AL Extension launch config also only allows to set those object types as startup objects
 
 
-## Known Issues
+## Future ideas
 
-Future ideas:
 - Run the current object
 - Run an arbitrary object
 
 
 ## Release Notes
 
+Notes for the released versions
+
+### 1.0.2
+
+Documentation fixes 
 
 ### 1.0.1
 
