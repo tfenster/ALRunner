@@ -1,0 +1,50 @@
+{
+    "name": "alrunner",
+    "displayName": "ALRunner",
+    "description": "Can run AL objects",
+    "version": "1.0.1",
+    "publisher": "tfenster",
+    "engines": {
+        "vscode": "^1.13.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:extension.runSelection"
+    ],
+    "main": "./out/src/extension",
+    "contributes": {
+        "commands": [{
+            "command": "extension.runSelection",
+            "title": "ALRunner: Run Selection"
+        },{
+            "command": "extension.runFirstObject",
+            "title": "ALRunner: Run object on first line"
+        }],
+        "keybindings": [{
+            "command": "extension.runSelection",
+            "key": "alt+r",
+            "mac": "cmd+r",
+            "when": "editorTextFocus"
+        },{
+            "command": "extension.runFirstObject",
+            "key": "shift+alt+r",
+            "mac": "shift+cmd+r",
+            "when": "editorTextFocus"
+        }]
+    },
+    "scripts": {
+        "vscode:prepublish": "tsc -p ./",
+        "compile": "tsc -watch -p ./",
+        "postinstall": "node ./node_modules/vscode/bin/install",
+        "test": "node ./node_modules/vscode/bin/test"
+    },
+    "devDependencies": {
+        "typescript": "^2.0.3",
+        "vscode": "^1.0.0",
+        "mocha": "^2.3.3",
+        "@types/node": "^6.0.40",
+        "@types/mocha": "^2.2.32"
+    }
+}
