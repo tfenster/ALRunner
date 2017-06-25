@@ -4,6 +4,7 @@
     "description": "Can run AL objects",
     "version": "1.0.1",
     "publisher": "tfenster",
+    "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
         "vscode": "^1.13.0"
     },
