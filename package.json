@@ -2,7 +2,7 @@
     "name": "alrunner",
     "displayName": "ALRunner",
     "description": "Can run AL objects",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
@@ -16,24 +16,30 @@
     ],
     "main": "./out/src/extension",
     "contributes": {
-        "commands": [{
-            "command": "extension.runSelection",
-            "title": "ALRunner: Run Selection"
-        },{
-            "command": "extension.runFirstObject",
-            "title": "ALRunner: Run object on first line"
-        }],
-        "keybindings": [{
-            "command": "extension.runSelection",
-            "key": "alt+r",
-            "mac": "cmd+r",
-            "when": "editorTextFocus"
-        },{
-            "command": "extension.runFirstObject",
-            "key": "shift+alt+r",
-            "mac": "shift+cmd+r",
-            "when": "editorTextFocus"
-        }]
+        "commands": [
+            {
+                "command": "extension.runSelection",
+                "title": "ALRunner: Run Selection"
+            },
+            {
+                "command": "extension.runFirstObject",
+                "title": "ALRunner: Run object on first line"
+            }
+        ],
+        "keybindings": [
+            {
+                "command": "extension.runSelection",
+                "key": "alt+r",
+                "mac": "cmd+r",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "extension.runFirstObject",
+                "key": "shift+alt+r",
+                "mac": "shift+cmd+r",
+                "when": "editorTextFocus"
+            }
+        ]
     },
     "scripts": {
         "vscode:prepublish": "tsc -p ./",
