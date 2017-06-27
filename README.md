@@ -1,6 +1,6 @@
 # AL Runner README
 
-AL Runner allows you to compile and publish your appliaction and run a NAV AL page or pageextension object using Alt+P for the object in the current selection or Shift+Alt+P for the first object in the file. It also allows you to just run (no compile and publish) a NAV AL page, pageextension or report object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file
+AL Runner allows you to compile and publish your application and run a NAV AL page object using Alt+P for the object in the current selection or Shift+Alt+P for the first object in the file. It also allows you to just run (no compile and publish) a NAV AL page or report object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file
 
 
 ## Features
@@ -37,7 +37,11 @@ Provides four commands:
 
 Notes for the released versions
 
-### 1.1.0.
+### 1.1.1
+
+Documentation fixes 
+
+### 1.1.0
 
 Add the ability not only to publish and run but also to directly run. This also adds the ability to run Reports
 
