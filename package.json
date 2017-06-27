@@ -2,7 +2,7 @@
     "name": "alrunner",
     "displayName": "ALRunner",
     "description": "Can run AL objects",
-    "version": "1.0.2",
+    "version": "1.1.0",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
@@ -12,18 +12,29 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:extension.runSelection"
+        "onCommand:extension.runSelection",
+        "onCommand:extension.runFirstObject",
+        "onCommand:extension.publishAndRunSelection",
+        "onCommand:extension.publishAndRunFirstObject"
     ],
     "main": "./out/src/extension",
     "contributes": {
         "commands": [
             {
                 "command": "extension.runSelection",
-                "title": "ALRunner: Run Selection"
+                "title": "ALRunner: Run selection"
             },
             {
                 "command": "extension.runFirstObject",
                 "title": "ALRunner: Run object on first line"
+            },
+            {
+                "command": "extension.publishAndRunSelection",
+                "title": "ALRunner: Publish and run selection"
+            },
+            {
+                "command": "extension.publishAndRunFirstObject",
+                "title": "ALRunner: Publish and run object on first line"
             }
         ],
         "keybindings": [
@@ -37,6 +48,18 @@
                 "command": "extension.runFirstObject",
                 "key": "shift+alt+r",
                 "mac": "shift+cmd+r",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "extension.publishAndRunSelection",
+                "key": "alt+p",
+                "mac": "cmd+p",
+                "when": "editorTextFocus"
+            },
+            {
+                "command": "extension.publishAndRunFirstObject",
+                "key": "shift+alt+p",
+                "mac": "shift+cmd+p",
                 "when": "editorTextFocus"
             }
         ]
@@ -53,5 +76,8 @@
         "mocha": "^2.3.3",
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
+    },
+    "dependencies": {
+        "opn": "^4.0.2"
     }
 }
