@@ -2,11 +2,11 @@
     "name": "alrunner",
     "displayName": "ALRunner",
     "description": "Can run AL objects",
-    "version": "1.1.1",
+    "version": "2.0.0",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
-        "vscode": "^1.13.0"
+        "vscode": "^1.18.0"
     },
     "categories": [
         "Other"
@@ -15,7 +15,8 @@
         "onCommand:extension.runSelection",
         "onCommand:extension.runFirstObject",
         "onCommand:extension.publishAndRunSelection",
-        "onCommand:extension.publishAndRunFirstObject"
+        "onCommand:extension.publishAndRunFirstObject",
+        "onCommand:extension.generateObjectsFromJson"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -35,6 +36,10 @@
             {
                 "command": "extension.publishAndRunFirstObject",
                 "title": "ALRunner: Publish and run object on first line"
+            },
+            {
+                "command": "extension.generateObjectsFromJson",
+                "title": "ALRunner: Generate objects by parsing and interpreting a JSON object"
             }
         ],
         "keybindings": [
@@ -72,7 +77,7 @@
     },
     "devDependencies": {
         "typescript": "^2.0.3",
-        "vscode": "^1.0.0",
+        "vscode": "^1.1.10",
         "mocha": "^2.3.3",
         "@types/node": "^6.0.40",
         "@types/mocha": "^2.2.32"
