@@ -2,7 +2,7 @@
     "name": "alrunner",
     "displayName": "ALRunner",
     "description": "Can run AL objects",
-    "version": "2.0.0",
+    "version": "2.3.0",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
@@ -83,6 +83,7 @@
         "@types/mocha": "^2.2.32"
     },
     "dependencies": {
-        "opn": "^4.0.2"
+        "opn": "^4.0.2",
+        "request": "^2.83.0"
     }
 }

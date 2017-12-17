@@ -18,6 +18,7 @@ Provides five commands:
 
 - You need to have the Microsoft AL Extension up and running (easiest way to get to that point is [here](https://msdn.microsoft.com/en-us/dynamics-nav/newdev-get-started))
 - opn ^4.0.2
+- request ^2.83.0
 
 
 ## Known Issues
@@ -40,6 +41,14 @@ Provides five commands:
 ## Release Notes
 
 Notes for the released versions
+
+### 2.3.0
+
+Slight problems with vsce...
+
+### 2.0.1
+
+Fix missing dependency for request
 
 ### 2.0.0
 
