@@ -11,7 +11,8 @@ Provides five commands:
 - "ALRunner: Run object on first line" or Shift+Alt+R which runs the object on the first line of the current file, if that is a page or report object
 - "ALRunner: Publish and run selection" or Alt+P which publishes your extension and runs the object in the currently selected line, if that is a page object. Note: This changes your launch config
 - "ALRunner: Publish and run object on first line" or Shift+Alt+P which publishes your extension and runs the object on the first line of the current file, if that is a page object. Note: This changes your launch config
-- "ALRunner: Generate objects by parsing and interpreting a JSON object" asks you for a URL, which should return a JSON file (authentication currently not supported) and then for the name of the entity represented by that JSON file. It then generates a table structured like the JSON file, a page showing that table and a codeunit with a function to refresh that data
+- "ALRunner: Generate objects by parsing a JSON object from a URL" asks you for a URL, which should return a JSON file (authentication currently not supported) and then for the name of the entity represented by that JSON file. It then generates a table structured like the JSON file, a page showing that table and a codeunit with a function to refresh that data
+- "ALRunner: Generate objects by parsing a JSON object in the current selection" does the same as the previous command but uses the currently selected text as data for parsing. This als asks you for a URL, which is only used for generating the AL code do download data and then for the name of the entity represented by that JSON file. With this command you code download a JSON object using authentication and then put the result into VS Code, select the relevant part and let generation run. For nested objects you could do the same but would need to handle linking parent and child objects
 
 
 ## Requirements
@@ -26,7 +27,7 @@ Provides five commands:
 - Only supports page objects for "publish and run" as the AL Extension launch config also only allows to set those object types as startup objects
 - Only supports page and report objects for "run" as the NAV Web Client also only allows to run those object types directly
 - Only works for the first configuration in your launch config
-- Generating objects for JSON doesn't support authorization and ignores nested structures
+- Generating objects for JSON doesn't support authorization and ignores nested structures. You might use the "parse current selection" feature to work around those limitations
 
 
 ## Future ideas
@@ -41,6 +42,10 @@ Provides five commands:
 ## Release Notes
 
 Notes for the released versions
+
+### 2.4.0
+
+Add support for parsing the current selection additionally to downloading it
 
 ### 2.3.0
 

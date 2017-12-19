@@ -16,7 +16,8 @@
         "onCommand:extension.runFirstObject",
         "onCommand:extension.publishAndRunSelection",
         "onCommand:extension.publishAndRunFirstObject",
-        "onCommand:extension.generateObjectsFromJson"
+        "onCommand:extension.generateObjectsFromURL",
+        "onCommand:extension.generateObjectsFromEditor"
     ],
     "main": "./out/src/extension",
     "contributes": {
@@ -38,8 +39,12 @@
                 "title": "ALRunner: Publish and run object on first line"
             },
             {
-                "command": "extension.generateObjectsFromJson",
-                "title": "ALRunner: Generate objects by parsing and interpreting a JSON object"
+                "command": "extension.generateObjectsFromURL",
+                "title": "ALRunner: Generate objects by parsing a JSON object from a URL"
+            },
+            {
+                "command": "extension.generateObjectsFromEditor",
+                "title": "ALRunner: Generate objects by parsing a JSON object in the current selection"
             }
         ],
         "keybindings": [

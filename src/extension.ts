@@ -27,8 +27,12 @@ export function activate(context: ExtensionContext) {
         alr.publishAndRunFirstObject(window.activeTextEditor);
     });
 
-    let disp5 = commands.registerCommand('extension.generateObjectsFromJson', () => {
-        alr.generateObjectsFromJson(window.activeTextEditor);
+    let disp5 = commands.registerCommand('extension.generateObjectsFromURL', () => {
+        alr.generateObjectsFromURL();
+    });
+
+    let disp6 = commands.registerCommand('extension.generateObjectsFromEditor', () => {
+        alr.generateObjectsFromEditor(window.activeTextEditor);
     });
 
     context.subscriptions.push(disp);
@@ -36,6 +40,7 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disp3);
     context.subscriptions.push(disp4);
     context.subscriptions.push(disp5);
+    context.subscriptions.push(disp6);
 }
 
 // this method is called when your extension is deactivated
@@ -76,7 +81,27 @@ class ALRunner {
         this.runObjectOnLine(line, true);
     }
 
-    public generateObjectsFromJson(editor: TextEditor) {
+    public generateObjectsFromEditor(editor: TextEditor) {
+        let alr = this;
+        window.showInputBox({prompt: 'From which URL do you want to read JSON data? (only for generating access code in AL)'})
+            .then(val => {
+                if (val === undefined) {
+                    return;
+                }
+
+                window.showInputBox({prompt: 'What entity are you reading?'})
+                    .then(val2 => {
+                        if (val2 === undefined) {
+                            return;
+                        }
+                        alr.DoGenerate(editor.document.getText(editor.selection), val2, val);
+                    });
+            });
+
+
+    }
+
+    public generateObjectsFromURL() {
         let alr = this;
         window.showInputBox({prompt: 'From which URL do you want to read JSON data?'})
             .then(val => {
@@ -106,6 +131,9 @@ class ALRunner {
                     }
                     window.showInputBox({prompt: 'What entity are you reading?'})
                         .then(val2 => {
+                            if (val2 === undefined) {
+                                return;
+                            }
                             alr.DoGenerate(body, val2, val);
                         });
                 });

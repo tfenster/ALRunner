@@ -6,10 +6,10 @@ export const tableTemplateBefore: string = `table 50100 ##entity##
      
 `;
 
-export const tableFieldTemplate: string = `                field(##id##;##name##;##type##)
-                {
-                    CaptionML=ENU='##name##';
-                }
+export const tableFieldTemplate: string = `        field(##id##;##name##;##type##)
+        {
+            CaptionML=ENU='##name##';
+        }
 `;
 
 export const tableKeyTemplate: string = `    
@@ -55,9 +55,9 @@ export const pageTemplateBefore: string = `page 50100 ##entity##List
                 
 `;
 
-export const pageFieldTemplate: string = `        field(##name##;##name##) {
-            ApplicationArea = All;
-        }
+export const pageFieldTemplate: string = `                field(##name##;##name##) {
+                    ApplicationArea = All;
+                }
 `;
 
 export const pageTemplateAfter: string = `
