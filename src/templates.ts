@@ -6,7 +6,7 @@ export const tableTemplateBefore: string = `table 50100 ##entity##
      
 `;
 
-export const tableFieldTemplate: string = `        field(##id##;##name##;##type##)
+export const tableFieldTemplate: string = `        field(##id##;"##name##";##type##)
         {
             CaptionML=ENU='##name##';
         }
@@ -55,7 +55,7 @@ export const pageTemplateBefore: string = `page 50100 ##entity##List
                 
 `;
 
-export const pageFieldTemplate: string = `                field(##name##;##name##) {
+export const pageFieldTemplate: string = `                field("##name##";"##name##") {
                     ApplicationArea = All;
                 }
 `;
@@ -145,9 +145,9 @@ export const codeunitTemplateBefore: string = `codeunit 50100 Refresh##entity##
         
 `;
 
-export const codeunitFieldTemplate: string = `        ##entity##.##name## := GetJsonToken(JsonObject,'##name##').AsValue.As##type##;
+export const codeunitFieldTemplate: string = `        ##entity##."##name##" := GetJsonToken(JsonObject,'##name##').AsValue.As##type##;
 `;
-export const codeunitTextFieldTemplate: string = `        ##entity##.##name## := COPYSTR(GetJsonToken(JsonObject,'##name##').AsValue.AsText, 1, 250);
+export const codeunitTextFieldTemplate: string = `        ##entity##."##name##" := COPYSTR(GetJsonToken(JsonObject,'##name##').AsValue.AsText, 1, 250);
 `;
 
 export const codeunitTemplateAfter: string = `

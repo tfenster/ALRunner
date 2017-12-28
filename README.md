@@ -43,6 +43,10 @@ Provides five commands:
 
 Notes for the released versions
 
+### 2.4.1
+
+Add double quotes around field names
+
 ### 2.4.0
 
 Add support for parsing the current selection additionally to downloading it
