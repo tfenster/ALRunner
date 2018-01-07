@@ -167,3 +167,39 @@ export const codeunitTemplateAfter: string = `
 
 }
 `;
+
+export const APIClientTemplate: string = `@baseurl = https://##ip##:7048
+@auth = Basic ##username## ##password##
+@apibase = /nav/api/beta
+
+###
+# get all services
+GET {{baseurl}}{{apibase}}/
+Authorization: {{auth}}
+
+###
+# get all customers
+GET {{baseurl}}{{apibase}}/customers
+Authorization: {{auth}}
+
+###
+# filter customers
+GET {{baseurl}}{{apibase}}/customers?$filter=displayName eq '##custname##'
+Authorization: {{auth}}
+
+###
+# get a specific customer
+GET {{baseurl}}{{apibase}}/customers(##custid##)
+Authorization: {{auth}}
+
+###
+# change a customer
+PATCH {{baseurl}}{{apibase}}/customers(##custid##)
+Authorization: {{auth}}
+Content-type: application/json
+If-Match: ##etag##
+
+{
+  "displayName": "Axians Infoma"
+}
+`;
