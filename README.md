@@ -7,13 +7,14 @@ The third part of AL Runner gives you a quick and easy way to get started with t
 
 ## Features
 
-Provides six commands:
+Provides eight commands:
 - "ALRunner: Run selection" or Alt+R which runs the object in the currently selected line, if that is a page or report object
 - "ALRunner: Run object on first line" or Shift+Alt+R which runs the object on the first line of the current file, if that is a page or report object
 - "ALRunner: Publish and run selection" or Alt+P which publishes your extension and runs the object in the currently selected line, if that is a page object. Note: This changes your launch config
 - "ALRunner: Publish and run object on first line" or Shift+Alt+P which publishes your extension and runs the object on the first line of the current file, if that is a page object. Note: This changes your launch config
 - "ALRunner: Generate objects by parsing a JSON object from a URL" asks you for a URL, which should return a JSON file (authentication currently not supported) and then for the name of the entity represented by that JSON file. It then generates a table structured like the JSON file, a page showing that table and a codeunit with a function to refresh that data
 - "ALRunner: Generate objects by parsing a JSON object in the current selection" does the same as the previous command but uses the currently selected text as data for parsing. This als asks you for a URL, which is only used for generating the AL code do download data and then for the name of the entity represented by that JSON file. With this command you code download a JSON object using authentication and then put the result into VS Code, select the relevant part and let generation run. For nested objects you could do the same but would need to handle linking parent and child objects
+- "ALRunner: Convert generated xlf to real one" takes a generated projectname.g.xlf file and copies the source tags into target tags so that the file becomes a valid xlf file. Keep in mind that this is really only the starting point for translating your extension
 - "ALRunner: Go API on Azure!" asks you to log in to your Azure account and select the subscription and resource group you want to use. It then uses an ARM template to create a Azure Container Instance for NAV 2018 with enabld Connect API and generates a sample client for it
 
 
@@ -51,6 +52,10 @@ Provides six commands:
 ## Release Notes
 
 Notes for the released versions
+
+### 3.1.0
+
+Add xlf conversion
 
 ### 3.0.0
 

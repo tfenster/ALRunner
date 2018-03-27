@@ -47,6 +47,10 @@ export function activate(context: ExtensionContext) {
         alr.goAzure();
     });
 
+    let disp8 = commands.registerCommand('extension.convertXlf', () => {
+        alr.convertXlf(window.activeTextEditor);
+    });
+
     context.subscriptions.push(disp);
     context.subscriptions.push(disp2);
     context.subscriptions.push(disp3);
@@ -54,6 +58,7 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disp5);
     context.subscriptions.push(disp6);
     context.subscriptions.push(disp7);
+    context.subscriptions.push(disp8);
 
     workspace.findFiles('initializeme.alrunner').then(
         r => {
@@ -338,6 +343,11 @@ class ALRunner {
         });
 
 
+    }
+
+    public convertXlf(editor: TextEditor) {
+        var re = /(<source>([^<]*)<\/source>)/;
+        this.generateAndOpenFile(editor.document.getText().replace(re, '$1\n\t\t\t\t\t<target>$2</target>'));
     }
 
     private DoGenerate(jsonText: string, entity: string, url: string) {

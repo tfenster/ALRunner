@@ -1,8 +1,8 @@
 {
     "name": "alrunner",
     "displayName": "ALRunner",
-    "description": "Can run AL objects",
-    "version": "3.0.0",
+    "description": "Can run AL objects and a bit more",
+    "version": "3.1.0",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
@@ -19,6 +19,7 @@
         "onCommand:extension.generateObjectsFromURL",
         "onCommand:extension.generateObjectsFromEditor",
         "onCommand:extension.goAzure",
+        "onCommand:extension.convertXlf",
         "workspaceContains:initializeme.alrunner"
     ],
     "main": "./out/src/extension",
@@ -51,6 +52,10 @@
             {
                 "command": "extension.goAzure",
                 "title": "ALRunner: Go API on Azure!"
+            },
+            {
+                "command": "extension.convertXlf",
+                "title": "ALRunner: Convert generated xlf to real one"
             }
         ],
         "keybindings": [
