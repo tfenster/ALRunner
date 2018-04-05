@@ -3,6 +3,7 @@
 AL Runner allows you to compile and publish your application and run a NAV AL page object using Alt+P for the object in the current selection or Shift+Alt+P for the first object in the file. It also allows you to just run (no compile and publish) a NAV AL page or report object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file.
 The second part of AL Runner allows you to parse a JSON object and generate AL objects from it (leaning heavily on [AJ Kauffmann's Github repo](https://github.com/ajkauffmann/ALCodeSamples), thanks for that!)
 The third part of AL Runner gives you a quick and easy way to get started with the NAV Connect API (see command "ALRunner: Go API on Azure!")
+The fourth part helps you to generate a valid xlf file (see command "ALRunner: Convert generated xlf to real one")
 
 
 ## Features
@@ -52,6 +53,10 @@ Provides eight commands:
 ## Release Notes
 
 Notes for the released versions
+
+### 3.1.1
+
+Fix bug where only the first source element was considered. Thanks to Luc van Vugt for [bringing it up](https://github.com/tfenster/ALRunner/issues/5)!
 
 ### 3.1.0
 
