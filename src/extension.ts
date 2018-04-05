@@ -346,7 +346,7 @@ class ALRunner {
     }
 
     public convertXlf(editor: TextEditor) {
-        var re = /(<source>([^<]*)<\/source>)/;
+        var re = /(<source>([^<]*)<\/source>)/g;
         this.generateAndOpenFile(editor.document.getText().replace(re, '$1\n\t\t\t\t\t<target>$2</target>'));
     }
 
