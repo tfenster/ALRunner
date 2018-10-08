@@ -1,14 +1,14 @@
 # AL Runner README
 
-AL Runner allows you to compile and publish your application and run a NAV AL page object using Alt+P for the object in the current selection or Shift+Alt+P for the first object in the file. It also allows you to just run (no compile and publish) a NAV AL page or report object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file.
+AL Runner allows you to compile and publish your application and run a NAV / BC AL page object using Alt+P for the object in the current selection or Shift+Alt+P for the first object in the file. It also allows you to just run (no compile and publish) a NAV / BC AL page or report object using Alt+R like in good old (actually bad old) C/SIDE for the object in the current selection or Shift+Alt+R for the first object in the file.
 The second part of AL Runner allows you to parse a JSON object and generate AL objects from it (leaning heavily on [AJ Kauffmann's Github repo](https://github.com/ajkauffmann/ALCodeSamples), thanks for that!)
-The third part of AL Runner gives you a quick and easy way to get started with the NAV Connect API (see command "ALRunner: Go API on Azure!")
+The third part of AL Runner gives you a quick and easy way to get started with the NAV / BC Connect API (see commands "ALRunner: Go API on Azure!" and "ALRunner: Generate an API client for Business Central")
 The fourth part helps you to generate a valid xlf file (see command "ALRunner: Convert generated xlf to real one")
 
 
 ## Features
 
-Provides eight commands:
+Provides a couple commands:
 - "ALRunner: Run selection" or Alt+R which runs the object in the currently selected line, if that is a page or report object
 - "ALRunner: Run object on first line" or Shift+Alt+R which runs the object on the first line of the current file, if that is a page or report object
 - "ALRunner: Publish and run selection" or Alt+P which publishes your extension and runs the object in the currently selected line, if that is a page object. Note: This changes your launch config
@@ -16,7 +16,8 @@ Provides eight commands:
 - "ALRunner: Generate objects by parsing a JSON object from a URL" asks you for a URL, which should return a JSON file (authentication currently not supported) and then for the name of the entity represented by that JSON file. It then generates a table structured like the JSON file, a page showing that table and a codeunit with a function to refresh that data
 - "ALRunner: Generate objects by parsing a JSON object in the current selection" does the same as the previous command but uses the currently selected text as data for parsing. This als asks you for a URL, which is only used for generating the AL code do download data and then for the name of the entity represented by that JSON file. With this command you code download a JSON object using authentication and then put the result into VS Code, select the relevant part and let generation run. For nested objects you could do the same but would need to handle linking parent and child objects
 - "ALRunner: Convert generated xlf to real one" takes a generated projectname.g.xlf file and copies the source tags into target tags so that the file becomes a valid xlf file. Keep in mind that this is really only the starting point for translating your extension
-- "ALRunner: Go API on Azure!" asks you to log in to your Azure account and select the subscription and resource group you want to use. It then uses an ARM template to create a Azure Container Instance for NAV 2018 with enabld Connect API and generates a sample client for it
+- "ALRunner: Go API on Azure!" asks you to log in to your Azure account and select the subscription and resource group you want to use. It then uses an ARM template to create a Azure Container Instance for Business Central with enabled Connect API and generates a sample client for it
+- "ALRunner: Generate an API client for Business Central" does the last part of "Go API on Azure!", i.e. it generates a sample client after asking for URL, username and password
 
 
 ## Requirements
@@ -35,7 +36,7 @@ Provides eight commands:
 ## Known Issues
 
 - Only supports page objects for "publish and run" as the AL Extension launch config also only allows to set those object types as startup objects
-- Only supports page and report objects for "run" as the NAV Web Client also only allows to run those object types directly
+- Only supports page and report objects for "run" as the NAV / BC Web Client also only allows to run those object types directly
 - Only works for the first configuration in your launch config
 - Generating objects for JSON doesn't support authorization and ignores nested structures. You might use the "parse current selection" feature to work around those limitations
 
@@ -47,12 +48,17 @@ Provides eight commands:
 - Find out which base page object a pageextension changes and run that
 - Allow to configure if full, tablet or phone Web Client is run
 - Support authorization and nested structures in JSON
-- Extend the Connect API samples, e.g. creating a customer or working with other entities 
 
 
 ## Release Notes
 
 Notes for the released versions
+
+### 3.2.0
+
+- Use letsencrypt certs when creating an ACI
+- Add posting of journal lines through a bound action to the sample API client
+- Allow generating a sample API client against an arbitrary backend without creating an ACI as first step
 
 ### 3.1.1
 
@@ -64,7 +70,7 @@ Add xlf conversion
 
 ### 3.0.0
 
-Add the ability to create a running Azure Container Instace for NAV 2018 with enabled Connect API and generate a sample client
+Add the ability to create a running Azure Container Instace for Business Central with enabled Connect API and generate a sample client
 
 ### 2.4.1
 

@@ -168,38 +168,80 @@ export const codeunitTemplateAfter: string = `
 }
 `;
 
-export const APIClientTemplate: string = `@baseurl = https://##ip##:7048
-@auth = Basic ##username## ##password##
-@apibase = /nav/api/beta
+export const APIClientTemplate: string = `@baseurl = ##baseurl##
+@username = ##username##
+@password = ##password##
+@apibase = /api/beta
 
 ###
 # get all services
 GET {{baseurl}}{{apibase}}/
-Authorization: {{auth}}
+Authorization: Basic {{username}} {{password}}
 
 ###
 # get all customers
 GET {{baseurl}}{{apibase}}/customers
-Authorization: {{auth}}
+Authorization: Basic {{username}} {{password}}
 
 ###
 # filter customers
 GET {{baseurl}}{{apibase}}/customers?$filter=displayName eq '##custname##'
-Authorization: {{auth}}
+Authorization: Basic {{username}} {{password}}
 
 ###
 # get a specific customer
 GET {{baseurl}}{{apibase}}/customers(##custid##)
-Authorization: {{auth}}
+Authorization: Basic {{username}} {{password}}
 
 ###
 # change a customer
 PATCH {{baseurl}}{{apibase}}/customers(##custid##)
-Authorization: {{auth}}
+Authorization: Basic {{username}} {{password}}
 Content-type: application/json
 If-Match: ##etag##
 
 {
   "displayName": "Axians Infoma"
 }
+
+###
+# get journal lines
+GET {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+Authorization: Basic {{username}} {{password}}
+
+###
+# add a journal line
+POST {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+Authorization: Basic {{username}} {{password}}
+Content-type: application/json
+
+{
+  "lineNumber": 60000,
+  "accountNumber": "1220",
+  "documentNumber": "1234",
+  "amount": 1500,
+  "description": "Increases during the Year",
+  "comment": ""
+}
+
+###
+# add a second journal line
+POST {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+Authorization: Basic {{username}} {{password}}
+Content-type: application/json
+
+{
+  "lineNumber": 50000,
+  "accountNumber": "2910",
+  "documentNumber": "1234",
+  "amount": -1500,
+  "description": "Urgent need",
+  "comment": ""
+}
+
+###
+# post a journal
+POST {{baseurl}}{{apibase}}/journals(##journalid##)/Microsoft.NAV.post
+Authorization: Basic {{username}} {{password}}
+
 `;

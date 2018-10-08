@@ -5,6 +5,7 @@ import * as templates from './templates';
 import * as http from 'http';
 import { tableTemplateAfter, tableKeyTemplate } from './templates';
 import { basename } from 'path';
+import { isNullOrUndefined } from 'util';
 
 const open = require('opn');
 const fs = require('fs');
@@ -51,6 +52,10 @@ export function activate(context: ExtensionContext) {
         alr.convertXlf(window.activeTextEditor);
     });
 
+    let disp9 = commands.registerCommand('extension.generateAPIClient', () => {
+        alr.generateAPIClient();
+    });
+
     context.subscriptions.push(disp);
     context.subscriptions.push(disp2);
     context.subscriptions.push(disp3);
@@ -59,21 +64,22 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disp6);
     context.subscriptions.push(disp7);
     context.subscriptions.push(disp8);
+    context.subscriptions.push(disp9);
 
     workspace.findFiles('initializeme.alrunner').then(
         r => {
             let basePath = workspace.rootPath;
             fs.unlinkSync(path.join(basePath, 'initializeme.alrunner'));
 
-            let baseURL = 'https://raw.githubusercontent.com/tfenster/azure-quickstart-templates/api-enabled-nav/aci-dynamicsnav-api-enabled/';
+            let baseURL = 'https://raw.githubusercontent.com/tfenster/azure-quickstart-templates/patch-5/101-aci-dynamicsnav/';
 
             download(baseURL + 'azuredeploy.json', {
-                directory: path.join(basePath, 'arm-templates', 'aci-dynamicsnav-api-enabled'),
+                directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
                 filename: 'azuredeploy.json'
             });
 
             download(baseURL + 'azuredeploy.parameters.json', {
-                directory: path.join(basePath, 'arm-templates', 'aci-dynamicsnav-api-enabled'),
+                directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
                 filename: 'azuredeploy.parameters.json'
             });
 
@@ -99,36 +105,45 @@ export function activate(context: ExtensionContext) {
                     console.log(err);
                     return;
                 }
-                window.showInformationMessage('Now you will need to select the subscription and resource group you want to use').then(r => {
-                    let subscriptionsForPick = [];
-                    subscriptions.forEach(element => {
-                        subscriptionsForPick.push(element.name);
-                    });
-                    window.showQuickPick(subscriptionsForPick)
-                        .then(selected => {
-                            let selectedSub = subscriptions.filter(sub => {
-                                return sub.name == selected;
-                            });
-                            alr.deployTemplate(credentials, function (err, result) {
-                                if (err)
-                                    return console.log(err);
-                                console.log('template deployed to azure! Now wait a bit as it takes some time until the container is actually reachable');
-                                setTimeout(function () {
-                                    let ip = result.properties.outputs.containerIPv4Address.value;
-                                    window.showInformationMessage(
-                                        'Deployment was successful! You can reach the WebClient at https://' + ip + '/nav/webclient', {
-                                            title: 'Get access data'
-                                        }).then(function (btn) {
-                                            if (btn && btn.title == 'Get access data') {
-                                                open('http://' + ip + ':8080/accessdata.html');
-                                            }
-                                            alr.generateAPIClient(ip);
+                window.showInputBox({prompt: "Enter the dns prefix of your container (must be unique)"}).then(function (dnsPref) {
+                    window.showInputBox({prompt: "Enter the password you want to set for user admin", password: true}).then(function (password) {
+                        window.showInputBox({prompt: "Enter your email address (for the letsencrypt certificate)"}).then(function (email) {
+                            window.showInformationMessage('Now you will need to select the subscription and resource group you want to use').then(r => {
+                                let subscriptionsForPick = [];
+                                subscriptions.forEach(element => {
+                                    subscriptionsForPick.push(element.name);
+                                });
+                                window.showQuickPick(subscriptionsForPick)
+                                    .then(selected => {
+                                        let selectedSub = subscriptions.filter(sub => {
+                                            return sub.name == selected;
                                         });
-                                }, 2 * 60 * 1000);
-                            },
-                                path.join(workspace.rootPath, 'arm-templates', 'aci-dynamicsnav-api-enabled', 'azuredeploy.json'),
-                                path.join(workspace.rootPath, 'arm-templates', 'aci-dynamicsnav-api-enabled', 'azuredeploy.parameters.json'),
-                                selectedSub[0].id);
+            
+                                        alr.deployTemplate(credentials, function (err, result) {
+                                            if (err)
+                                                return console.log(err);
+                                            window.showInformationMessage('template deployed to azure! Now wait a bit as it takes some time until the container is actually reachable');
+                                            setTimeout(function () {
+                                                let fqdn = dnsPref + '.westeurope.azurecontainer.io';
+                                                window.showInformationMessage(
+                                                    'Deployment was successful! You can reach the WebClient at https://' + fqdn + '/nav', {
+                                                        title: 'Get vsix'
+                                                    }).then(function (btn) {
+                                                        if (btn && btn.title == 'Get vsix') {
+                                                            open('http://' + fqdn + ':8080');
+                                                        }
+                                                        alr.generateAPIClient(fqdn, password);
+                                                    });
+                                            }, 2 * 60 * 1000);
+                                        },
+                                            path.join(workspace.rootPath, 'arm-templates', '101-aci-dynamicsnav', 'azuredeploy.json'),
+                                            password,
+                                            dnsPref,
+                                            email,
+                                            selectedSub[0].id);
+                                    });
+                                });
+                            });
                         });
                 });
             });
@@ -251,8 +266,7 @@ class ALRunner {
         });
     }
 
-    public deployTemplate(credentials, callback, templateFilePath, templateParametersFilePath, subscriptionId) {
-        let resourceGroupName = '';
+    public deployTemplate(credentials, callback, templateFilePath, password, dnsPrefix, letsEncryptMail, subscriptionId) {
         let deploymentName = 'acinavapi';
 
         let template;
@@ -260,13 +274,21 @@ class ALRunner {
 
         try {
             template = JSON.parse(fs.readFileSync(templateFilePath));
-            templateParameters = JSON.parse(fs.readFileSync(templateParametersFilePath));
         } catch (error) {
             callback(error);
         }
 
-        if (templateParameters.parameters)
-            templateParameters = templateParameters.parameters;
+        templateParameters = {
+            username: { "value": "admin" },
+            password: { "value": password },
+            acceptEula: { "value": "Y" },
+            dnsPrefix: { "value": dnsPrefix },
+            letsEncryptMail: { "value": letsEncryptMail },
+            cpuCores: { "value": "4" },
+            memoryInGb: { "value": "8" },
+            navRelease: { "value": "microsoft/bcsandbox:base"},
+            customNavSettings: { "value": "ApiServicesEnabled=true" }
+        };
 
         var parameters = {
             properties: {
@@ -290,23 +312,57 @@ class ALRunner {
         });
     }
 
-    public generateAPIClient(ip: string) {
-        let reqOptions = {
-            url: 'http://' + ip + ':8080/accessdata.html',
+    public generateAPIClient(fqdn: string = undefined, password: string = undefined) {
+        let username = "admin";
+        let url = null;
+        if (! isNullOrUndefined(fqdn)) {
+            url = 'https://' + fqdn + ':7048/nav' 
+        }
+        if (isNullOrUndefined(fqdn) || isNullOrUndefined(password)) {
+            window.showInputBox({prompt: 'Please enter the OData url incl. port and instance name, e.g. https://myserver:7048/nav'}).then(url => {
+                if (url === undefined) {
+                    return;
+                }
+                window.showInputBox({prompt: 'Please enter the username used to connect to the system'}).then(username => {
+                    if (username === undefined) {
+                        return;
+                    }
+                    window.showInputBox({prompt: 'Please enter the password used to connect to the system', password: true}).then(password => {
+                        if (password === undefined) {
+                            return;
+                        }
+                        this.doGenerateAPIClient(password, username, url);
+                    });
+                });
+            });
+        } else {
+            this.doGenerateAPIClient(password, username, url);
+        }
+    }
+
+    private doGenerateAPIClient(password: string, username: string, baseurl: string) {
+        let reqOptionsAuth = {
+            url: baseurl + '/api/beta/customers',
             headers: {
                 'User-Agent': 'request'
-            }
+            },
+            auth: {
+                user: username,
+                pass: password,
+                sendImmediately: false
+            },
+            rejectUnauthorized: false,
+            strictSSL: false
         };
 
-        request(reqOptions, function (error, response, body) {
-            let username = body.substring(body.indexOf('Username:') + 9);
-            username = username.substring(0, username.indexOf('<br />'));
+        request(reqOptionsAuth, function (error, response, body) {
+            let jsonObject = JSON.parse(body);
+            let custid = jsonObject.value[0].id;
+            let custname = jsonObject.value[0].displayName;
+            let etag = jsonObject.value[0]["@odata.etag"];
 
-            let password = body.substring(body.indexOf('Password:') + 9);
-            password = password.substring(0, password.indexOf('</p>'));
-
-            let reqOptionsAuth = {
-                url: 'https://' + ip + ':7048/nav/api/beta/customers',
+            let reqOptionsAuthJournal = {
+                url: baseurl + '/api/beta/journals?$filter=code eq \'DEFAULT\'',
                 headers: {
                     'User-Agent': 'request'
                 },
@@ -319,18 +375,17 @@ class ALRunner {
                 strictSSL: false
             };
 
-            request(reqOptionsAuth, function (error, response, body) {
-                let jsonObject = JSON.parse(body);
-                let custid = jsonObject.value[0].id;
-                let custname = jsonObject.value[0].displayName;
-                let etag = jsonObject.value[0]["@odata.etag"];
+            request(reqOptionsAuthJournal, function (error, response, bodyJournals) {
+                let jsonObjectJournals = JSON.parse(bodyJournals);
+                let journalId = jsonObjectJournals.value[0].id;
 
                 let httpContent = templates.APIClientTemplate.replace(/##username##/g, username);
                 httpContent = httpContent.replace(/##password##/g, password);
-                httpContent = httpContent.replace(/##ip##/g, ip);
+                httpContent = httpContent.replace(/##baseurl##/g, baseurl);
                 httpContent = httpContent.replace(/##custid##/g, custid);
                 httpContent = httpContent.replace(/##custname##/g, custname);
                 httpContent = httpContent.replace(/##etag##/g, etag);
+                httpContent = httpContent.replace(/##journalid##/g, journalId);
 
                 fs.writeFile(path.join(workspace.rootPath, 'sample.http'), httpContent, (err) => {
                     if (err) {
@@ -341,7 +396,6 @@ class ALRunner {
                 });
             });
         });
-
 
     }
 

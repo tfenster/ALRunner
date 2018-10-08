@@ -16,6 +16,7 @@
         "onCommand:extension.runFirstObject",
         "onCommand:extension.publishAndRunSelection",
         "onCommand:extension.publishAndRunFirstObject",
+        "onCommand:extension.generateAPIClient",
         "onCommand:extension.generateObjectsFromURL",
         "onCommand:extension.generateObjectsFromEditor",
         "onCommand:extension.goAzure",
@@ -52,6 +53,10 @@
             {
                 "command": "extension.goAzure",
                 "title": "ALRunner: Go API on Azure!"
+            },
+            {
+                "command": "extension.generateAPIClient",
+                "title": "ALRunner: Generate an API client for Business Central"
             },
             {
                 "command": "extension.convertXlf",
@@ -92,11 +97,11 @@
         "test": "node ./node_modules/vscode/bin/test"
     },
     "devDependencies": {
-        "typescript": "^2.0.3",
-        "vscode": "^1.1.10",
-        "mocha": "^2.3.3",
+        "@types/mocha": "^2.2.32",
         "@types/node": "^6.0.40",
-        "@types/mocha": "^2.2.32"
+        "mocha": "^5.2.0",
+        "typescript": "^2.0.3",
+        "vscode": "^1.1.20"
     },
     "dependencies": {
         "opn": "^4.0.2",
