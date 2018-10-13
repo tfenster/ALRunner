@@ -342,7 +342,7 @@ class ALRunner {
 
     private doGenerateAPIClient(password: string, username: string, baseurl: string) {
         let reqOptionsAuth = {
-            url: baseurl + '/api/beta/customers',
+            url: baseurl + '/api/beta/companies',
             headers: {
                 'User-Agent': 'request'
             },
@@ -357,45 +357,55 @@ class ALRunner {
 
         request(reqOptionsAuth, function (error, response, body) {
             let jsonObject = JSON.parse(body);
-            let custid = jsonObject.value[0].id;
-            let custname = jsonObject.value[0].displayName;
-            let etag = jsonObject.value[0]["@odata.etag"];
+            if (isNullOrUndefined(jsonObject) || isNullOrUndefined(jsonObject.value) || isNullOrUndefined(jsonObject.value[0])) {
+                window.showErrorMessage('Coudn\t find a company in your database');
+                return;
+            }
+            let companyId = jsonObject.value[0].id;
 
-            let reqOptionsAuthJournal = {
-                url: baseurl + '/api/beta/journals?$filter=code eq \'DEFAULT\'',
-                headers: {
-                    'User-Agent': 'request'
-                },
-                auth: {
-                    user: username,
-                    pass: password,
-                    sendImmediately: false
-                },
-                rejectUnauthorized: false,
-                strictSSL: false
-            };
+            reqOptionsAuth.url = baseurl + '/api/beta/companies(' + companyId + ')/customers';
+    
+            request(reqOptionsAuth, function (error, response, body) {
+                let jsonObject = JSON.parse(body);
+                if (isNullOrUndefined(jsonObject) || isNullOrUndefined(jsonObject.value) || isNullOrUndefined(jsonObject.value[0])) {
+                    window.showErrorMessage('Coudn\t find a customer in your database');
+                    return;
+                }
+                let custid = jsonObject.value[0].id;
+                let custname = jsonObject.value[0].displayName;
+                let etag = jsonObject.value[0]["@odata.etag"];
 
-            request(reqOptionsAuthJournal, function (error, response, bodyJournals) {
-                let jsonObjectJournals = JSON.parse(bodyJournals);
-                let journalId = jsonObjectJournals.value[0].id;
-
-                let httpContent = templates.APIClientTemplate.replace(/##username##/g, username);
-                httpContent = httpContent.replace(/##password##/g, password);
-                httpContent = httpContent.replace(/##baseurl##/g, baseurl);
-                httpContent = httpContent.replace(/##custid##/g, custid);
-                httpContent = httpContent.replace(/##custname##/g, custname);
-                httpContent = httpContent.replace(/##etag##/g, etag);
-                httpContent = httpContent.replace(/##journalid##/g, journalId);
-
-                fs.writeFile(path.join(workspace.rootPath, 'sample.http'), httpContent, (err) => {
-                    if (err) {
-                        console.log(err);
+                reqOptionsAuth.url = baseurl + '/api/beta/companies(' + companyId + ')/journals';
+    
+                request(reqOptionsAuth, function (error, response, bodyJournals) {
+                    let jsonObjectJournals = JSON.parse(bodyJournals);
+                    if (isNullOrUndefined(jsonObjectJournals) || isNullOrUndefined(jsonObjectJournals.value) || isNullOrUndefined(jsonObjectJournals.value[0])) {
+                        window.showErrorMessage('Coudn\t find a general journal in your database');
                         return;
                     }
-                    workspace.openTextDocument(path.join(workspace.rootPath, 'sample.http'));
+                    let journalId = jsonObjectJournals.value[0].id;
+    
+                    let httpContent = templates.APIClientTemplate.replace(/##username##/g, username);
+                    httpContent = httpContent.replace(/##password##/g, password);
+                    httpContent = httpContent.replace(/##baseurl##/g, baseurl);
+                    httpContent = httpContent.replace(/##custid##/g, custid);
+                    httpContent = httpContent.replace(/##custname##/g, custname);
+                    httpContent = httpContent.replace(/##etag##/g, etag);
+                    httpContent = httpContent.replace(/##journalid##/g, journalId);
+                    httpContent = httpContent.replace(/##companyid##/g, companyId);
+    
+                    fs.writeFile(path.join(workspace.rootPath, 'sample.http'), httpContent, (err) => {
+                        if (err) {
+                            console.log(err);
+                            return;
+                        }
+                        workspace.openTextDocument(path.join(workspace.rootPath, 'sample.http'));
+                    });
                 });
             });
         });
+        
+        
 
     }
 

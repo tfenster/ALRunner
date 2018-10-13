@@ -180,22 +180,22 @@ Authorization: Basic {{username}} {{password}}
 
 ###
 # get all customers
-GET {{baseurl}}{{apibase}}/customers
+GET {{baseurl}}{{apibase}}/companies(##companyid##)/customers
 Authorization: Basic {{username}} {{password}}
 
 ###
 # filter customers
-GET {{baseurl}}{{apibase}}/customers?$filter=displayName eq '##custname##'
+GET {{baseurl}}{{apibase}}/companies(##companyid##)/customers?$filter=displayName eq '##custname##'
 Authorization: Basic {{username}} {{password}}
 
 ###
 # get a specific customer
-GET {{baseurl}}{{apibase}}/customers(##custid##)
+GET {{baseurl}}{{apibase}}/companies(##companyid##)/customers(##custid##)
 Authorization: Basic {{username}} {{password}}
 
 ###
 # change a customer
-PATCH {{baseurl}}{{apibase}}/customers(##custid##)
+PATCH {{baseurl}}{{apibase}}/companies(##companyid##)/customers(##custid##)
 Authorization: Basic {{username}} {{password}}
 Content-type: application/json
 If-Match: ##etag##
@@ -206,12 +206,12 @@ If-Match: ##etag##
 
 ###
 # get journal lines
-GET {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+GET {{baseurl}}{{apibase}}/companies(##companyid##)/journals(##journalid##)/journalLines
 Authorization: Basic {{username}} {{password}}
 
 ###
 # add a journal line
-POST {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+POST {{baseurl}}{{apibase}}/companies(##companyid##)/journals(##journalid##)/journalLines
 Authorization: Basic {{username}} {{password}}
 Content-type: application/json
 
@@ -226,7 +226,7 @@ Content-type: application/json
 
 ###
 # add a second journal line
-POST {{baseurl}}{{apibase}}/journals(##journalid##)/journalLines
+POST {{baseurl}}{{apibase}}/companies(##companyid##)/journals(##journalid##)/journalLines
 Authorization: Basic {{username}} {{password}}
 Content-type: application/json
 
@@ -241,7 +241,7 @@ Content-type: application/json
 
 ###
 # post a journal
-POST {{baseurl}}{{apibase}}/journals(##journalid##)/Microsoft.NAV.post
+POST {{baseurl}}{{apibase}}/companies(##companyid##)/journals(##journalid##)/Microsoft.NAV.post
 Authorization: Basic {{username}} {{password}}
 
 `;

@@ -54,6 +54,10 @@ Provides a couple commands:
 
 Notes for the released versions
 
+### 3.2.1
+
+Fix a bug where the sample API client wasn't generated when the database had no default company
+
 ### 3.2.0
 
 - Use letsencrypt certs when creating an ACI
