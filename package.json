@@ -2,7 +2,7 @@
     "name": "alrunner",
     "displayName": "ALRunner",
     "description": "Can run AL objects and a bit more",
-    "version": "3.2.0",
+    "version": "3.2.1",
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
