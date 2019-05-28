@@ -1,11 +1,12 @@
 'use strict';
-import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument, TextEditor, ViewColumn, workspace, TextLine, TextEdit, Uri } from 'vscode';
+import { window, commands, Disposable, ExtensionContext, StatusBarAlignment, StatusBarItem, TextDocument, TextEditor, ViewColumn, workspace, TextLine, TextEdit, Uri, languages } from 'vscode';
 import { worker } from 'cluster';
 import * as templates from './templates';
 import * as http from 'http';
 import { tableTemplateAfter, tableKeyTemplate } from './templates';
 import { basename } from 'path';
 import { isNullOrUndefined } from 'util';
+import { diagnosticOutput } from './diagnostic';
 
 const open = require('opn');
 const fs = require('fs');
@@ -56,6 +57,10 @@ export function activate(context: ExtensionContext) {
         alr.generateAPIClient();
     });
 
+    let disp10 = commands.registerCommand('extension.exportDiagnostics', () => {
+        alr.exportDiagnostics();
+    });
+
     context.subscriptions.push(disp);
     context.subscriptions.push(disp2);
     context.subscriptions.push(disp3);
@@ -65,89 +70,92 @@ export function activate(context: ExtensionContext) {
     context.subscriptions.push(disp7);
     context.subscriptions.push(disp8);
     context.subscriptions.push(disp9);
+    context.subscriptions.push(disp10);
 
     workspace.findFiles('initializeme.alrunner').then(
         r => {
-            let basePath = workspace.rootPath;
-            fs.unlinkSync(path.join(basePath, 'initializeme.alrunner'));
+            if (r.length > 0) {
+                let basePath = workspace.rootPath;
+                fs.unlinkSync(path.join(basePath, 'initializeme.alrunner'));
 
-            let baseURL = 'https://raw.githubusercontent.com/tfenster/azure-quickstart-templates/patch-5/101-aci-dynamicsnav/';
+                let baseURL = 'https://raw.githubusercontent.com/tfenster/azure-quickstart-templates/patch-5/101-aci-dynamicsnav/';
 
-            download(baseURL + 'azuredeploy.json', {
-                directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
-                filename: 'azuredeploy.json'
-            });
+                download(baseURL + 'azuredeploy.json', {
+                    directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
+                    filename: 'azuredeploy.json'
+                });
 
-            download(baseURL + 'azuredeploy.parameters.json', {
-                directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
-                filename: 'azuredeploy.parameters.json'
-            });
+                download(baseURL + 'azuredeploy.parameters.json', {
+                    directory: path.join(basePath, 'arm-templates', '101-aci-dynamicsnav'),
+                    filename: 'azuredeploy.parameters.json'
+                });
 
-            let options = {
-                userCodeResponseLogger: function (message) {
-                    let startsWithCode = message.substring(message.indexOf('devicelogin and enter the code ') + 31);
-                    let codeOnly = startsWithCode.substring(0, startsWithCode.indexOf(' '));
-                    cp.copy(codeOnly);
+                let options = {
+                    userCodeResponseLogger: function (message) {
+                        let startsWithCode = message.substring(message.indexOf('devicelogin and enter the code ') + 31);
+                        let codeOnly = startsWithCode.substring(0, startsWithCode.indexOf(' '));
+                        cp.copy(codeOnly);
 
-                    window.showInformationMessage(
-                        'You will now need to log in to Azure. Click log in and paste the ID ' + codeOnly + ' that is already copied to the clipboard into the entry field', {
-                            title: 'Log in'
-                        }).then(function (btn) {
-                            if (btn && btn.title == 'Log in') {
-                                open('https://aka.ms/devicelogin');
-                            }
-                        });
-                }
-            };
+                        window.showInformationMessage(
+                            'You will now need to log in to Azure. Click log in and paste the ID ' + codeOnly + ' that is already copied to the clipboard into the entry field', {
+                                title: 'Log in'
+                            }).then(function (btn) {
+                                if (btn && btn.title == 'Log in') {
+                                    open('https://aka.ms/devicelogin');
+                                }
+                            });
+                    }
+                };
 
-            msRestAzure.interactiveLogin(options, function (err, credentials, subscriptions) {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                window.showInputBox({prompt: "Enter the dns prefix of your container (must be unique)"}).then(function (dnsPref) {
-                    window.showInputBox({prompt: "Enter the password you want to set for user admin", password: true}).then(function (password) {
-                        window.showInputBox({prompt: "Enter your email address (for the letsencrypt certificate)"}).then(function (email) {
-                            window.showInformationMessage('Now you will need to select the subscription and resource group you want to use').then(r => {
-                                let subscriptionsForPick = [];
-                                subscriptions.forEach(element => {
-                                    subscriptionsForPick.push(element.name);
-                                });
-                                window.showQuickPick(subscriptionsForPick)
-                                    .then(selected => {
-                                        let selectedSub = subscriptions.filter(sub => {
-                                            return sub.name == selected;
+                msRestAzure.interactiveLogin(options, function (err, credentials, subscriptions) {
+                    if (err) {
+                        console.log(err);
+                        return;
+                    }
+                    window.showInputBox({prompt: "Enter the dns prefix of your container (must be unique)"}).then(function (dnsPref) {
+                        window.showInputBox({prompt: "Enter the password you want to set for user admin", password: true}).then(function (password) {
+                            window.showInputBox({prompt: "Enter your email address (for the letsencrypt certificate)"}).then(function (email) {
+                                window.showInformationMessage('Now you will need to select the subscription and resource group you want to use').then(r => {
+                                    let subscriptionsForPick = [];
+                                    subscriptions.forEach(element => {
+                                        subscriptionsForPick.push(element.name);
+                                    });
+                                    window.showQuickPick(subscriptionsForPick)
+                                        .then(selected => {
+                                            let selectedSub = subscriptions.filter(sub => {
+                                                return sub.name == selected;
+                                            });
+                
+                                            alr.deployTemplate(credentials, function (err, result) {
+                                                if (err)
+                                                    return console.log(err);
+                                                window.showInformationMessage('template deployed to azure! Now wait a bit as it takes some time until the container is actually reachable');
+                                                setTimeout(function () {
+                                                    let fqdn = dnsPref + '.westeurope.azurecontainer.io';
+                                                    window.showInformationMessage(
+                                                        'Deployment was successful! You can reach the WebClient at https://' + fqdn + '/nav', {
+                                                            title: 'Get vsix'
+                                                        }).then(function (btn) {
+                                                            if (btn && btn.title == 'Get vsix') {
+                                                                open('http://' + fqdn + ':8080');
+                                                            }
+                                                            alr.generateAPIClient(fqdn, password);
+                                                        });
+                                                }, 2 * 60 * 1000);
+                                            },
+                                                path.join(workspace.rootPath, 'arm-templates', '101-aci-dynamicsnav', 'azuredeploy.json'),
+                                                password,
+                                                dnsPref,
+                                                email,
+                                                selectedSub[0].id);
                                         });
-            
-                                        alr.deployTemplate(credentials, function (err, result) {
-                                            if (err)
-                                                return console.log(err);
-                                            window.showInformationMessage('template deployed to azure! Now wait a bit as it takes some time until the container is actually reachable');
-                                            setTimeout(function () {
-                                                let fqdn = dnsPref + '.westeurope.azurecontainer.io';
-                                                window.showInformationMessage(
-                                                    'Deployment was successful! You can reach the WebClient at https://' + fqdn + '/nav', {
-                                                        title: 'Get vsix'
-                                                    }).then(function (btn) {
-                                                        if (btn && btn.title == 'Get vsix') {
-                                                            open('http://' + fqdn + ':8080');
-                                                        }
-                                                        alr.generateAPIClient(fqdn, password);
-                                                    });
-                                            }, 2 * 60 * 1000);
-                                        },
-                                            path.join(workspace.rootPath, 'arm-templates', '101-aci-dynamicsnav', 'azuredeploy.json'),
-                                            password,
-                                            dnsPref,
-                                            email,
-                                            selectedSub[0].id);
                                     });
                                 });
                             });
-                        });
+                    });
                 });
-            });
 
+            }
         }
     );
 }
@@ -542,5 +550,37 @@ class ALRunner {
                 window.showErrorMessage('Did not find a page or report object in the current line. Are you at the first line of a page or report?')
             }
         }
+    }
+
+    public exportDiagnostics() {
+        let tuples = languages.getDiagnostics();
+        let basePath = workspace.rootPath;
+        let baseLength = basePath.length + 1;
+		let diagnosticOutputs: diagnosticOutput[] = [];
+		for (var [thisUri,thisDiagnostics] of tuples) {
+            for (let thisDiagnostic of thisDiagnostics) {
+                let myDiagnosticOutput : diagnosticOutput = new diagnosticOutput();
+                if (thisUri.fsPath.startsWith(basePath)) {
+                    myDiagnosticOutput.fsPath = thisUri.fsPath.substring(baseLength);
+                } else {
+                    myDiagnosticOutput.fsPath = thisUri.fsPath;
+                }
+                myDiagnosticOutput.code = thisDiagnostic.code;
+                myDiagnosticOutput.message = thisDiagnostic.message;
+                myDiagnosticOutput.startLine = thisDiagnostic.range.start.line;
+                myDiagnosticOutput.startCharacter = thisDiagnostic.range.start.character;
+                myDiagnosticOutput.endLine = thisDiagnostic.range.end.line;
+                myDiagnosticOutput.endCharacter = thisDiagnostic.range.end.character;
+                diagnosticOutputs.push(myDiagnosticOutput);
+            }
+        }
+        let date  = new Date();
+        let header = 'file;error code;error message;start line;start char;end line;end char\r\n';
+        fs.writeFile(path.join(basePath, 'diagnostics.csv'), header + diagnosticOutputs.join('\r\n'), (err) => {
+            if (err) {
+                console.log(err);
+                return;
+            }
+        });
     }
 }

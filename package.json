@@ -6,7 +6,7 @@
     "publisher": "tfenster",
     "repository": "https://github.com/tfenster/ALRunner",
     "engines": {
-        "vscode": "^1.18.0"
+        "vscode": "^1.33.0"
     },
     "categories": [
         "Other"
@@ -21,6 +21,7 @@
         "onCommand:extension.generateObjectsFromEditor",
         "onCommand:extension.goAzure",
         "onCommand:extension.convertXlf",
+        "onCommand:extension.exportDiagnostics",
         "workspaceContains:initializeme.alrunner"
     ],
     "main": "./out/src/extension",
@@ -61,6 +62,10 @@
             {
                 "command": "extension.convertXlf",
                 "title": "ALRunner: Convert generated xlf to real one"
+            },
+            {
+                "command": "extension.exportDiagnostics",
+                "title": "ALRunner: Export diagnostics"
             }
         ],
         "keybindings": [
@@ -98,19 +103,19 @@
     },
     "devDependencies": {
         "@types/mocha": "^2.2.32",
-        "@types/node": "^6.0.40",
+        "@types/node": "^6.14.6",
         "mocha": "^5.2.0",
         "typescript": "^2.0.3",
-        "vscode": "^1.1.20"
+        "vscode": "^1.1.33"
     },
     "dependencies": {
-        "opn": "^4.0.2",
-        "request": "^2.83.0",
-        "download-file": "^0.1.5",
         "azure-arm-resource": "^3.1.0-preview",
-        "ms-rest": "^2.3.0",
-        "ms-rest-azure": "^2.5.0",
-        "copy-paste": "^1.3.0"
+        "copy-paste": "^1.3.0",
+        "download-file": "^0.1.5",
+        "ms-rest": "^2.5.0",
+        "ms-rest-azure": "^2.6.0",
+        "opn": "^4.0.2",
+        "request": "^2.83.0"
     },
     "extensionDependencies": [
         "humao.rest-client"

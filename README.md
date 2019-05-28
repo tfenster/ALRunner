@@ -18,6 +18,7 @@ Provides a couple commands:
 - "ALRunner: Convert generated xlf to real one" takes a generated projectname.g.xlf file and copies the source tags into target tags so that the file becomes a valid xlf file. Keep in mind that this is really only the starting point for translating your extension
 - "ALRunner: Go API on Azure!" asks you to log in to your Azure account and select the subscription and resource group you want to use. It then uses an ARM template to create a Azure Container Instance for Business Central with enabled Connect API and generates a sample client for it
 - "ALRunner: Generate an API client for Business Central" does the last part of "Go API on Azure!", i.e. it generates a sample client after asking for URL, username and password
+- "ALRunner: Export diagnostics" exports all diagnostic information (errors and warnings) from all extensions to a CSV file called diagnostics.csv for analysis using e.g. Excel. An existing file will be overwritten
 
 
 ## Requirements
@@ -53,6 +54,10 @@ Provides a couple commands:
 ## Release Notes
 
 Notes for the released versions
+
+### 3.3.0
+
+Add action to export diagnosti information to CSV file
 
 ### 3.2.1
 
