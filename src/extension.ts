@@ -575,7 +575,7 @@ class ALRunner {
             }
         }
         let date  = new Date();
-        let header = 'file;error code;error message;start line;start char;end line;end char\r\n';
+        let header = 'file|error code|error message|start line|start char|end line|end char\r\n';
         fs.writeFile(path.join(basePath, 'diagnostics.csv'), header + diagnosticOutputs.join('\r\n'), (err) => {
             if (err) {
                 console.log(err);

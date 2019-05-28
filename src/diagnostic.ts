@@ -10,6 +10,6 @@ export class diagnosticOutput {
     endCharacter: string | number;
 
     public toString(): string {
-        return this.fsPath + ';' + this.code + ';' + this.message + ';' + this.startLine + ';' + this.startCharacter + ';' + this.endLine + ';' + this.endCharacter;
+        return this.fsPath + '|' + this.code + '|' + this.message + '|' + this.startLine + '|' + this.startCharacter + '|' + this.endLine + '|' + this.endCharacter;
     }
 }
