@@ -55,6 +55,10 @@ Provides a couple commands:
 
 Notes for the released versions
 
+### 3.3.1
+
+Use | as CSV separator instead of ; for fewer clashes with error message texts
+
 ### 3.3.0
 
 Add action to export diagnostic information to CSV file
