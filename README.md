@@ -57,7 +57,7 @@ Notes for the released versions
 
 ### 3.3.0
 
-Add action to export diagnosti information to CSV file
+Add action to export diagnostic information to CSV file
 
 ### 3.2.1
 
