@@ -7,6 +7,7 @@ import { tableTemplateAfter, tableKeyTemplate } from './templates';
 import { basename } from 'path';
 import { isNullOrUndefined } from 'util';
 import { diagnosticOutput } from './diagnostic';
+import { type } from 'os';
 
 const open = require('opn');
 const fs = require('fs');
@@ -16,7 +17,6 @@ const path = require('path');
 const ResourceManagement = require('azure-arm-resource');
 const msRest = require('ms-rest');
 const msRestAzure = require('ms-rest-azure');
-const cp = require('copy-paste');
 
 export function activate(context: ExtensionContext) {
     let alr = new ALRunner();
@@ -94,10 +94,9 @@ export function activate(context: ExtensionContext) {
                     userCodeResponseLogger: function (message) {
                         let startsWithCode = message.substring(message.indexOf('devicelogin and enter the code ') + 31);
                         let codeOnly = startsWithCode.substring(0, startsWithCode.indexOf(' '));
-                        cp.copy(codeOnly);
 
                         window.showInformationMessage(
-                            'You will now need to log in to Azure. Click log in and paste the ID ' + codeOnly + ' that is already copied to the clipboard into the entry field', {
+                            'You will now need to log in to Azure. Click log in and paste the ID ' + codeOnly + ' into the entry field', {
                                 title: 'Log in'
                             }).then(function (btn) {
                                 if (btn && btn.title == 'Log in') {
@@ -565,7 +564,12 @@ class ALRunner {
                 } else {
                     myDiagnosticOutput.fsPath = thisUri.fsPath;
                 }
-                myDiagnosticOutput.code = thisDiagnostic.code;
+                if (typeof thisDiagnostic.code === "string" || typeof thisDiagnostic.code === "number")
+                    myDiagnosticOutput.code = thisDiagnostic.code;
+                else if (thisDiagnostic.code?.value !== undefined) {
+                    myDiagnosticOutput.code = thisDiagnostic.code.value;
+                    myDiagnosticOutput.target = thisDiagnostic.code.target;
+                }
                 myDiagnosticOutput.message = thisDiagnostic.message;
                 myDiagnosticOutput.startLine = thisDiagnostic.range.start.line;
                 myDiagnosticOutput.startCharacter = thisDiagnostic.range.start.character;
@@ -575,7 +579,7 @@ class ALRunner {
             }
         }
         let date  = new Date();
-        let header = 'file|error code|error message|start line|start char|end line|end char\r\n';
+        let header = 'file|error code|error message|start line|start char|end line|end char|target\r\n';
         fs.writeFile(path.join(basePath, 'diagnostics.csv'), header + diagnosticOutputs.join('\r\n'), (err) => {
             if (err) {
                 console.log(err);
